@@ -5,13 +5,13 @@ import com.example.projectmanager.user.UserResponse;
 import jakarta.validation.Valid;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,23 +26,21 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        User user = authService.register(request);
-        String token = jwtService.createToken(AuthenticatedUser.from(user));
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new AuthResponse(token, UserResponse.from(user)));
+    public void registerDisabled() {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "系统不开放自助注册，请联系管理员开户");
     }
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         User user = authService.authenticate(request);
-        String token = jwtService.createToken(AuthenticatedUser.from(user));
-        return new AuthResponse(token, UserResponse.from(user));
+        AuthenticatedUser authenticatedUser = authService.toAuthenticatedUser(user);
+        String token = jwtService.createToken(authenticatedUser);
+        return new AuthResponse(token, UserResponse.from(authenticatedUser));
     }
 
     @GetMapping("/me")
     public UserResponse currentUser(@AuthenticationPrincipal AuthenticatedUser user) {
-        return new UserResponse(user.getId(), user.getUsernameValue(), user.getEmail(), user.getDisplayName(), user.getRole().name());
+        return UserResponse.from(user);
     }
 
     @PostMapping("/logout")

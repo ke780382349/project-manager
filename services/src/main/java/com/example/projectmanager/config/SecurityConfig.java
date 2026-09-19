@@ -3,6 +3,7 @@ package com.example.projectmanager.config;
 import com.example.projectmanager.auth.JwtAuthenticationFilter;
 import com.example.projectmanager.auth.AuthenticatedUser;
 import com.example.projectmanager.user.UserRepository;
+import com.example.projectmanager.user.RoleRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,9 +37,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    UserDetailsService userDetailsService(UserRepository userRepository) {
+    UserDetailsService userDetailsService(UserRepository userRepository, RoleRepository roleRepository) {
         return email -> userRepository.findByEmailIgnoreCase(email)
-                .map(AuthenticatedUser::from)
+                .flatMap(user -> user.getRoleId() == null
+                        ? java.util.Optional.empty()
+                        : roleRepository.findById(user.getRoleId())
+                                .map(role -> AuthenticatedUser.from(user, role)))
                 .orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
     }
 

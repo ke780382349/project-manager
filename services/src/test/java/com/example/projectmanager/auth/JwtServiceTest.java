@@ -15,11 +15,12 @@ class JwtServiceTest {
     void createsTokenThatContainsTheUserId() {
         JwtService jwtService = new JwtService(SECRET, Duration.ofDays(30));
         User user = new User("test@example.com", "hashed-password", "Test User");
-        setIdForTest(user, 42L);
+        String userId = "A1B2C3D4E5F678901234567890ABCDEF";
+        setIdForTest(user, userId);
 
         String token = jwtService.createToken(AuthenticatedUser.from(user));
 
-        assertEquals(42L, jwtService.getUserId(token));
+        assertEquals(userId, jwtService.getUserId(token));
     }
 
     @Test
@@ -27,7 +28,7 @@ class JwtServiceTest {
         assertThrows(IllegalArgumentException.class, () -> new JwtService("too-short", Duration.ofDays(30)));
     }
 
-    private static void setIdForTest(User user, Long id) {
+    private static void setIdForTest(User user, String id) {
         try {
             var field = User.class.getDeclaredField("id");
             field.setAccessible(true);
