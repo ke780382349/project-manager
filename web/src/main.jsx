@@ -47,7 +47,7 @@ function AuthForm({ onAuthenticated }) {
       localStorage.setItem(TOKEN_KEY, data.token);
       onAuthenticated(data.user);
     } catch (error) {
-      setMessage(error.message);
+      setMessage(error instanceof TypeError ? "无法连接服务端，请确认后端运行在 8080 端口" : error.message);
     } finally {
       setSubmitting(false);
     }
