@@ -1,0 +1,27 @@
+:root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #172033; background: #f3f6fb; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+.container { width: min(100% - 32px, 720px); margin: 0 auto; padding: 9vh 0; }
+.card { background: #fff; border: 1px solid #e4e9f2; border-radius: 18px; padding: 36px; box-shadow: 0 12px 36px rgba(26, 42, 73, .08); }
+.auth-card { max-width: 520px; margin: 0 auto; }
+h1 { margin: 0 0 8px; font-size: 30px; }
+h2 { margin: 0 0 8px; }
+.muted { color: #68748a; }
+.eyebrow { margin: 0 0 8px; color: #4868d8; font-size: 12px; letter-spacing: .12em; font-weight: 700; }
+.tabs { display: flex; gap: 8px; border-bottom: 1px solid #e5e9f1; margin: 28px 0 24px; }
+.tab { border: 0; background: none; padding: 10px 4px; margin-right: 18px; color: #68748a; font-size: 15px; }
+.tab.active { color: #3159d8; border-bottom: 2px solid #3159d8; }
+label { display: block; margin: 16px 0; font-size: 14px; font-weight: 600; }
+input { display: block; width: 100%; margin-top: 8px; border: 1px solid #d7deeb; border-radius: 9px; padding: 12px 13px; outline: none; }
+input:focus { border-color: #5574df; box-shadow: 0 0 0 3px rgba(85, 116, 223, .14); }
+.primary { width: 100%; margin-top: 8px; border: 0; border-radius: 9px; padding: 11px 16px; color: #fff; background: #3159d8; font-weight: 600; }
+.primary:hover { background: #274ab8; }
+.primary:disabled { cursor: wait; opacity: .7; }
+.secondary { border: 1px solid #d7deeb; border-radius: 9px; padding: 11px 16px; color: #34415a; background: #fff; font-weight: 600; }
+.message { min-height: 22px; margin: 16px 0 0; color: #c0392b; font-size: 14px; }
+.dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.empty-state { margin-top: 32px; padding: 28px; border-radius: 12px; background: #f6f8fc; color: #46536b; }
+.loading { text-align: center; color: #68748a; }
+@media (max-width: 560px) { .card { padding: 24px; } .dashboard-header { flex-direction: column; } }
