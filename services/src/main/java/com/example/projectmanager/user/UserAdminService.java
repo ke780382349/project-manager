@@ -27,6 +27,14 @@ public class UserAdminService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<UserOptionResponse> listUserOptions() {
+        return userRepository.findAllByOrderByIdAsc().stream()
+                .filter(User::isEnabled)
+                .map(UserOptionResponse::from)
+                .toList();
+    }
+
     @Transactional
     public UserResponse createUser(CreateUserRequest request) {
         String username = request.username().trim();

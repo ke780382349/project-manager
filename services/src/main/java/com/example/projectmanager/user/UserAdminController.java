@@ -31,6 +31,12 @@ public class UserAdminController {
         return userAdminService.listUsers();
     }
 
+    @GetMapping("/options")
+    @PreAuthorize("hasAnyAuthority('" + PermissionIds.USER_MANAGE + "', '" + PermissionIds.PROJECT_MANAGE + "')")
+    public List<UserOptionResponse> listUserOptions() {
+        return userAdminService.listUserOptions();
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse createUser(@Valid @RequestBody CreateUserRequest request) {

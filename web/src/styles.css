@@ -202,6 +202,28 @@ input:focus { border-color: #5574df; box-shadow: 0 0 0 3px rgba(85, 116, 223, .1
 .danger-link { padding: 0; border: 0; color: #c16b67; background: transparent; font-size: 11px; }
 .danger-link:hover { color: #a23f3a; }
 .sidebar-backdrop { display: none; }
+.project-list-card { min-height: 420px; }
+.project-table-wrap { margin-top: 18px; overflow-x: auto; }
+.project-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.project-table th { padding: 0 10px 11px; border-bottom: 1px solid #edf0f5; color: #9aa3b4; font-size: 11px; font-weight: 650; text-align: left; white-space: nowrap; }
+.project-table td { padding: 13px 10px; border-bottom: 1px solid #f0f2f6; color: #526078; vertical-align: middle; }
+.project-table tbody tr:last-child td { border-bottom: 0; }
+.project-name-cell strong { color: #354159; font-size: 13px; }
+.project-name-link { padding: 0; border: 0; background: transparent; text-align: left; }
+.project-name-link:hover strong { color: #3159d8; text-decoration: underline; }
+.project-description-cell { min-width: 180px; max-width: 320px; color: #7b879b !important; }
+.project-member-list { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; min-width: 150px; max-width: 300px; }
+.project-member-list span:not(.table-hint) { padding: 4px 7px; border-radius: 5px; color: #5571d5; background: #edf1ff; font-size: 10px; }
+.project-member-avatar { display: grid; width: 26px; height: 26px; flex: 0 0 26px; place-items: center; border-radius: 50%; color: #fff; background: #7d92e0; font-size: 11px; font-weight: 650; }
+.project-member-cell { display: flex; align-items: center; gap: 9px; min-width: 150px; }
+.project-member-cell strong { color: #354159; font-size: 13px; }
+.project-back { display: block; margin-bottom: 11px; padding: 0; font-size: 12px; }
+.project-add-member { display: flex; align-items: flex-end; gap: 10px; margin-top: 18px; }
+.project-add-member .custom-select { flex: 1; min-width: 0; margin-top: 0; }
+.project-add-member .primary { width: auto; margin: 0; padding: 11px 18px; white-space: nowrap; }
+.project-add-hint { display: block; margin: 10px 0 0; }
+.project-detail-actions { display: flex; justify-content: center; margin-top: 16px; }
+.project-back-button { width: auto; }
 
 @media (max-width: 1080px) {
   .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

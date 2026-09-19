@@ -1,6 +1,6 @@
 # Project Manager
 
-项目管理系统，当前先实现用户模块和统一登录。
+项目管理系统，当前已实现用户、角色、权限和项目模块。
 
 ## 工程结构
 
@@ -75,6 +75,14 @@ GET  /api/permissions  Authorization: Bearer <token>
 POST /api/permissions  Authorization: Bearer <token>
 PATCH /api/permissions/{id} Authorization: Bearer <token>
 DELETE /api/permissions/{id} Authorization: Bearer <token>
+GET  /api/users/options  Authorization: Bearer <token>
+GET  /api/projects       Authorization: Bearer <token>
+GET  /api/projects/{id}  Authorization: Bearer <token>
+POST /api/projects       Authorization: Bearer <token>
+PATCH /api/projects/{id} Authorization: Bearer <token>
+POST /api/projects/{id}/members  Authorization: Bearer <token>
+DELETE /api/projects/{id}/members/{userId}  Authorization: Bearer <token>
+DELETE /api/projects/{id} Authorization: Bearer <token>
 ```
 
 `POST /api/users` 请求示例：
@@ -113,6 +121,39 @@ DELETE /api/permissions/{id} Authorization: Bearer <token>
 权限 ID 使用去掉横杠的 32 位 UUID。自定义权限的 ID 由系统自动生成；内置权限使用 `PermissionIds.java` 中的固定 UUID，保证新建数据库和重启后的鉴权规则一致。登录和 `/api/auth/me` 响应中的 `permissions` 是权限 ID 列表，前端菜单和后端接口都按这些 ID 判断权限。
 
 管理员可以新增自定义权限，并通过 `permissionIds` 将它们分配给角色。后续业务接口需要校验对应权限 ID 才会生效。修改权限名称和描述不会改变 ID 或已有角色关联。
+
+## 项目模块
+
+项目保存在 `projects` 表，成员关系保存在 `project_members` 表。项目 ID 同样使用去掉横杠的 32 位 UUID。
+
+规则：
+
+- 创建项目时只需要名称和描述；创建人自动成为负责人并始终保留在成员中。
+- 项目不包含状态、开始日期和结束日期字段，编辑项目时也只能调整名称和描述。
+- 成员按人员（用户）分配，不按角色分配；创建项目时不选择成员，成员在项目详情页单独维护。
+- 前端项目列表使用列表（表格）展示，点击项目名称或操作列的「成员」进入项目详情页，可以添加和移除成员。
+- 拥有 `PROJECT_VIEW`（查看项目）的用户只能看到自己负责或参与的项目；拥有 `PROJECT_MANAGE`（管理项目）的用户可以看到全部项目，并可以创建、修改、维护成员和删除。
+- 内置 `ADMIN` 角色拥有全部权限，内置 `USER` 角色默认拥有查看项目、查看任务和管理任务权限。
+- `GET /api/users/options` 返回启用状态用户的精简列表，供项目成员选择使用，需要 `USER_MANAGE` 或 `PROJECT_MANAGE` 权限。
+
+`POST /api/projects` 请求示例：
+
+```json
+{
+  "name": "官网改版",
+  "description": "第三季度完成官网视觉与内容升级"
+}
+```
+
+`POST /api/projects/{id}/members` 请求示例：
+
+```json
+{
+  "userId": "成员用户 ID"
+}
+```
+
+移除成员使用 `DELETE /api/projects/{id}/members/{userId}`，负责人不能被移除。
 
 后端首次启动时会自动创建管理员测试账号：
 
