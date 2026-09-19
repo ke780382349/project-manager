@@ -114,7 +114,12 @@ function App() {
       .finally(() => setLoading(false));
   }, []);
 
-  function logout() {
+  async function logout() {
+    try {
+      await request("/api/auth/logout", { method: "POST" });
+    } catch {
+      // 即使网络中断，也清理当前浏览器中的令牌。
+    }
     localStorage.removeItem(TOKEN_KEY);
     setUser(null);
   }

@@ -46,7 +46,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public Map<String, String> logout() {
+    public Map<String, String> logout(@AuthenticationPrincipal AuthenticatedUser user) {
+        authService.logout(user.getId());
         return Map.of("message", "已退出登录");
     }
 }

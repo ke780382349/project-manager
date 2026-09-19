@@ -39,6 +39,14 @@ public class AuthService {
         return user;
     }
 
+    @Transactional
+    public void logout(Long userId) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.invalidateTokens();
+            userRepository.save(user);
+        });
+    }
+
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase();
     }

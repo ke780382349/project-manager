@@ -38,16 +38,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Long userId = jwtService.getUserId(token);
                 Optional<User> user = userRepository.findById(userId);
-                user.map(AuthenticatedUser::from).ifPresent(authenticatedUser -> {
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    authenticatedUser,
-                                    null,
-                                    authenticatedUser.getAuthorities()
-                            );
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                });
+                user.filter(currentUser -> currentUser.getTokenVersion() == jwtService.getTokenVersion(token))
+                        .map(AuthenticatedUser::from)
+                        .ifPresent(authenticatedUser -> {
+                            UsernamePasswordAuthenticationToken authentication =
+                                    new UsernamePasswordAuthenticationToken(
+                                            authenticatedUser,
+                                            null,
+                                            authenticatedUser.getAuthorities()
+                                    );
+                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                        });
             } catch (JwtException | IllegalArgumentException ignored) {
                 // 无效令牌交给 Spring Security 处理，不让它影响公开接口。
             }

@@ -34,6 +34,9 @@ public class User {
     @Column(nullable = false, length = 20)
     private UserRole role = UserRole.USER;
 
+    @Column(name = "token_version", nullable = false)
+    private int tokenVersion = 0;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -79,5 +82,13 @@ public class User {
 
     public UserRole getRole() {
         return role;
+    }
+
+    public int getTokenVersion() {
+        return tokenVersion;
+    }
+
+    public void invalidateTokens() {
+        tokenVersion++;
     }
 }

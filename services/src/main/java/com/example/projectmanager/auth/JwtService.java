@@ -34,6 +34,7 @@ public class JwtService {
                 .subject(String.valueOf(user.getId()))
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
+                .claim("tokenVersion", user.getTokenVersion())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(tokenLifetime)))
                 .signWith(signingKey)
@@ -41,11 +42,20 @@ public class JwtService {
     }
 
     public Long getUserId(String token) {
-        Claims claims = Jwts.parser()
+        String subject = getClaims(token).getSubject();
+        return subject == null ? null : Long.valueOf(subject);
+    }
+
+    public int getTokenVersion(String token) {
+        Number tokenVersion = getClaims(token).get("tokenVersion", Number.class);
+        return tokenVersion == null ? -1 : tokenVersion.intValue();
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser()
                 .verifyWith(signingKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        return Long.valueOf(claims.getSubject());
     }
 }

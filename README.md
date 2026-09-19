@@ -9,7 +9,7 @@ services/  Spring Boot + Java + MySQL 后端
 web/       React + Vite 前端
 ```
 
-后端使用 JWT 认证，令牌默认有效期为 30 天。后续的项目、需求、Bug 和任务模块都复用 `/api/auth/me` 识别当前用户。
+后端使用 JWT 认证，令牌默认有效期为 30 天。后续的项目、需求、Bug 和任务模块都复用 `/api/auth/me` 识别当前用户。退出登录时会递增用户的令牌版本，使已有令牌失效。
 
 ## 启动数据库
 

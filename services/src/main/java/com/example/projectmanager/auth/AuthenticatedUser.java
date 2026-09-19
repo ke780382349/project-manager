@@ -15,6 +15,7 @@ public class AuthenticatedUser implements UserDetails {
     private final String passwordHash;
     private final String displayName;
     private final UserRole role;
+    private final int tokenVersion;
 
     private AuthenticatedUser(User user) {
         this.id = user.getId();
@@ -22,6 +23,7 @@ public class AuthenticatedUser implements UserDetails {
         this.passwordHash = user.getPasswordHash();
         this.displayName = user.getDisplayName();
         this.role = user.getRole();
+        this.tokenVersion = user.getTokenVersion();
     }
 
     public static AuthenticatedUser from(User user) {
@@ -42,6 +44,10 @@ public class AuthenticatedUser implements UserDetails {
 
     public UserRole getRole() {
         return role;
+    }
+
+    public int getTokenVersion() {
+        return tokenVersion;
     }
 
     @Override
