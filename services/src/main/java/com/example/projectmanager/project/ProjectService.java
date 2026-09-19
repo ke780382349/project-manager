@@ -36,7 +36,7 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     public ProjectResponse getProject(String id, AuthenticatedUser current) {
-        return toResponse(resolveVisible(id, current));
+        return toResponse(requireVisibleProject(id, current));
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectResponse updateProject(String id, UpdateProjectRequest request, AuthenticatedUser current) {
-        Project project = resolveVisible(id, current);
+        Project project = requireVisibleProject(id, current);
         project.setName(request.name().trim());
         project.setDescription(cleanDescription(request.description()));
         return toResponse(projectRepository.save(project));
@@ -60,7 +60,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectResponse addMember(String id, AddProjectMemberRequest request, AuthenticatedUser current) {
-        Project project = resolveVisible(id, current);
+        Project project = requireVisibleProject(id, current);
         String userId = request.userId().trim();
         boolean alreadyMember = project.getMembers().stream().anyMatch(member -> member.getId().equals(userId));
         if (alreadyMember) {
@@ -76,7 +76,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectResponse removeMember(String id, String userId, AuthenticatedUser current) {
-        Project project = resolveVisible(id, current);
+        Project project = requireVisibleProject(id, current);
         if (project.getOwnerId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "负责人不能从成员中移除");
         }
@@ -91,10 +91,11 @@ public class ProjectService {
 
     @Transactional
     public void deleteProject(String id, AuthenticatedUser current) {
-        projectRepository.delete(resolveVisible(id, current));
+        projectRepository.delete(requireVisibleProject(id, current));
     }
 
-    private Project resolveVisible(String id, AuthenticatedUser current) {
+    @Transactional(readOnly = true)
+    public Project requireVisibleProject(String id, AuthenticatedUser current) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "项目不存在"));
         boolean visible = canManage(current)

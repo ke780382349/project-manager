@@ -9,7 +9,7 @@ import { UserManagement } from "./pages/users.jsx";
 import { RoleManagement } from "./pages/roles.jsx";
 import { PermissionManagement } from "./pages/permissions.jsx";
 import { ProjectManagement } from "./pages/projects.jsx";
-import { ProjectDetail } from "./pages/project-detail.jsx";
+import { ProjectSpace } from "./pages/project-space.jsx";
 
 function Dashboard({ user, onLogout }) {
   const [activeId, setActiveId] = React.useState("dashboard");
@@ -25,7 +25,7 @@ function Dashboard({ user, onLogout }) {
   function renderPage() {
     if (activeId === "projects") {
       return openProjectId
-        ? <ProjectDetail currentUser={user} onBack={() => setOpenProjectId(null)} projectId={openProjectId} />
+        ? <ProjectSpace currentUser={user} onBack={() => setOpenProjectId(null)} projectId={openProjectId} />
         : <ProjectManagement currentUser={user} onOpenProject={setOpenProjectId} />;
     }
     if (activeId === "dashboard") return <WorkspaceHome user={user} />;

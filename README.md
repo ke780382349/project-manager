@@ -83,6 +83,18 @@ PATCH /api/projects/{id} Authorization: Bearer <token>
 POST /api/projects/{id}/members  Authorization: Bearer <token>
 DELETE /api/projects/{id}/members/{userId}  Authorization: Bearer <token>
 DELETE /api/projects/{id} Authorization: Bearer <token>
+GET  /api/requirements  Authorization: Bearer <token>
+POST /api/requirements  Authorization: Bearer <token>
+PATCH /api/requirements/{id}  Authorization: Bearer <token>
+DELETE /api/requirements/{id}  Authorization: Bearer <token>
+GET  /api/tasks  Authorization: Bearer <token>
+POST /api/tasks  Authorization: Bearer <token>
+PATCH /api/tasks/{id}  Authorization: Bearer <token>
+DELETE /api/tasks/{id}  Authorization: Bearer <token>
+GET  /api/bugs  Authorization: Bearer <token>
+POST /api/bugs  Authorization: Bearer <token>
+PATCH /api/bugs/{id}  Authorization: Bearer <token>
+DELETE /api/bugs/{id}  Authorization: Bearer <token>
 ```
 
 `POST /api/users` 请求示例：
@@ -131,10 +143,10 @@ DELETE /api/projects/{id} Authorization: Bearer <token>
 - 创建项目时只需要名称和描述；创建人自动成为负责人并始终保留在成员中。
 - 项目不包含状态、开始日期和结束日期字段，编辑项目时也只能调整名称和描述。
 - 成员按人员（用户）分配，不按角色分配；创建项目时不选择成员，成员在项目详情页单独维护。
-- 前端项目列表使用列表（表格）展示，点击项目名称或操作列的「成员」进入项目详情页，可以添加和移除成员。
+- 前端项目列表使用列表（表格）展示，点击项目名称进入项目空间；项目空间下通过标签切换需求池、任务、Bug 和成员等子模块。
 - 拥有 `PROJECT_VIEW`（查看项目）的用户只能看到自己负责或参与的项目；拥有 `PROJECT_MANAGE`（管理项目）的用户可以看到全部项目，并可以创建、修改、维护成员和删除。
-- 内置 `ADMIN` 角色拥有全部权限，内置 `USER` 角色默认拥有查看项目、查看任务和管理任务权限。
-- `GET /api/users/options` 返回启用状态用户的精简列表，供项目成员选择使用，需要 `USER_MANAGE` 或 `PROJECT_MANAGE` 权限。
+- 内置 `ADMIN` 角色拥有全部权限，内置 `USER` 角色默认拥有查看项目、查看需求、查看任务、管理任务和查看 Bug 权限。
+- `GET /api/users/options` 返回启用状态用户的精简列表，供项目成员和任务负责人选择使用，需要 `USER_MANAGE`、`PROJECT_MANAGE` 或 `TASK_MANAGE` 权限。
 
 `POST /api/projects` 请求示例：
 
@@ -154,6 +166,78 @@ DELETE /api/projects/{id} Authorization: Bearer <token>
 ```
 
 移除成员使用 `DELETE /api/projects/{id}/members/{userId}`，负责人不能被移除。
+
+## 需求池
+
+需求保存在 `requirements` 表，每条需求通过 `project_id` 绑定到一个项目。需求 ID 同样使用去掉横杠的 32 位 UUID。
+
+规则：
+
+- 需求绑定在项目内部：前端入口在项目详情页的「需求池」标签下，侧边栏不再单独提供研发管理入口；提交人自动记录为提出人。
+- 需求状态为 `PENDING`（待评审）、`ACCEPTED`（已接受）、`REJECTED`（已拒绝），新建需求默认待评审。
+- 拥有 `REQUIREMENT_VIEW`（查看需求）的用户可以看到自己可见项目下的需求并提交新需求；拥有 `REQUIREMENT_MANAGE`（管理需求）的用户还可以修改需求内容、评审状态和删除需求。
+- `GET /api/requirements` 支持 `projectId` 查询参数，只返回该项目下的需求。
+
+`POST /api/requirements` 请求示例：
+
+```json
+{
+  "projectId": "项目 ID",
+  "title": "支持导出项目报表",
+  "description": "按项目导出成员和需求列表"
+}
+```
+
+`PATCH /api/requirements/{id}` 请求示例：
+
+```json
+{
+  "title": "支持导出项目报表",
+  "description": "按项目导出成员和需求列表",
+  "status": "ACCEPTED"
+}
+```
+
+## 研发任务
+
+任务保存在 `tasks` 表，每条任务通过 `project_id` 绑定到一个项目，可以指定负责人用户。
+
+规则：
+
+- 拥有 `TASK_VIEW`（查看任务）的用户可以看到自己可见项目下的任务并创建任务；拥有 `TASK_MANAGE`（管理任务）的用户还可以修改任务内容、状态、负责人和删除任务。
+- 任务状态为 `TODO`（未开始）、`DOING`（进行中）、`DONE`（已完成），新建任务默认未开始。
+- 负责人从启用用户中选择，不指定时列表显示「未指定」。
+
+`POST /api/tasks` 请求示例：
+
+```json
+{
+  "projectId": "项目 ID",
+  "title": "完成报表导出接口",
+  "description": "支持 CSV 导出",
+  "assigneeId": "用户 ID，可为空"
+}
+```
+
+## Bug 管理
+
+Bug 保存在 `bugs` 表，绑定到项目，报告人自动记录为提交人。
+
+规则：
+
+- 拥有 `BUG_VIEW`（查看 Bug）的用户可以看到自己可见项目下的 Bug 并提交新 Bug；拥有 `BUG_MANAGE`（管理 Bug）的用户还可以修改 Bug 内容、严重程度、处理状态和删除 Bug。
+- 严重程度为 `LOW`、`MEDIUM`、`HIGH`，新建 Bug 默认 `MEDIUM`；状态为 `OPEN`（待修复）、`FIXED`（已修复）、`CLOSED`（已关闭）。
+
+`POST /api/bugs` 请求示例：
+
+```json
+{
+  "projectId": "项目 ID",
+  "title": "导出报表缺少成员列",
+  "description": "复现步骤：点击导出按钮",
+  "severity": "HIGH"
+}
+```
 
 后端首次启动时会自动创建管理员测试账号：
 

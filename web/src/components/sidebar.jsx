@@ -11,15 +11,6 @@ const navigationGroups = [
       { id: "projects", label: "项目", icon: "▣", permission: PERMISSION_IDS.PROJECT_VIEW },
     ],
   },
-  {
-    title: "研发管理",
-    items: [
-      { id: "requirements", label: "需求池", icon: "◇" },
-      { id: "bugs", label: "Bug", icon: "⚠" },
-      { id: "changes", label: "需求变更", icon: "↗" },
-      { id: "releases", label: "版本发布", icon: "◷" },
-    ],
-  },
 ];
 
 const standaloneNavigationItems = [

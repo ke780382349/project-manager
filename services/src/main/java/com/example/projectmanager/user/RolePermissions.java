@@ -8,7 +8,8 @@ public final class RolePermissions {
     }
 
     public static Set<String> defaultsForUser() {
-        return Set.of(PermissionIds.PROJECT_VIEW, PermissionIds.TASK_VIEW, PermissionIds.TASK_MANAGE);
+        return Set.of(PermissionIds.PROJECT_VIEW, PermissionIds.REQUIREMENT_VIEW,
+                PermissionIds.TASK_VIEW, PermissionIds.TASK_MANAGE, PermissionIds.BUG_VIEW);
     }
 
     public static Set<String> defaultsForAdmin() {

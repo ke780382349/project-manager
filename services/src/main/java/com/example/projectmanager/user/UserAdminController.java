@@ -32,7 +32,8 @@ public class UserAdminController {
     }
 
     @GetMapping("/options")
-    @PreAuthorize("hasAnyAuthority('" + PermissionIds.USER_MANAGE + "', '" + PermissionIds.PROJECT_MANAGE + "')")
+    @PreAuthorize("hasAnyAuthority('" + PermissionIds.USER_MANAGE + "', '" + PermissionIds.PROJECT_MANAGE
+            + "', '" + PermissionIds.TASK_MANAGE + "')")
     public List<UserOptionResponse> listUserOptions() {
         return userAdminService.listUserOptions();
     }
