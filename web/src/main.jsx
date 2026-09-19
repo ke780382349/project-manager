@@ -26,7 +26,7 @@ async function request(path, options = {}) {
 
 function AuthForm({ onAuthenticated }) {
   const [registerMode, setRegisterMode] = React.useState(false);
-  const [email, setEmail] = React.useState("");
+  const [account, setAccount] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [displayName, setDisplayName] = React.useState("");
   const [message, setMessage] = React.useState("");
@@ -37,8 +37,9 @@ function AuthForm({ onAuthenticated }) {
     setMessage("");
     setSubmitting(true);
     try {
-      const payload = { email: email.trim(), password };
-      if (registerMode) payload.displayName = displayName.trim();
+      const payload = registerMode
+        ? { email: account.trim(), password, displayName: displayName.trim() }
+        : { account: account.trim(), password };
       const data = await request(`/api/auth/${registerMode ? "register" : "login"}`, {
         method: "POST",
         body: JSON.stringify(payload),
@@ -68,10 +69,10 @@ function AuthForm({ onAuthenticated }) {
           </label>
         )}
         <label>邮箱
-          <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" placeholder="name@example.com" />
+          <input type={registerMode ? "email" : "text"} value={account} onChange={(event) => setAccount(event.target.value)} required autoComplete={registerMode ? "email" : "username"} placeholder={registerMode ? "name@example.com" : "邮箱或账号，例如 admin"} />
         </label>
         <label>密码
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength="8" autoComplete={registerMode ? "new-password" : "current-password"} placeholder="至少 8 位" />
+          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={registerMode ? 8 : undefined} autoComplete={registerMode ? "new-password" : "current-password"} placeholder={registerMode ? "至少 8 位" : "请输入密码"} />
         </label>
         <button className="primary" disabled={submitting} type="submit">{submitting ? "处理中…" : registerMode ? "注册并进入系统" : "登录"}</button>
       </form>

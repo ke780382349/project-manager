@@ -42,7 +42,7 @@ public class AuthController {
 
     @GetMapping("/me")
     public UserResponse currentUser(@AuthenticationPrincipal AuthenticatedUser user) {
-        return new UserResponse(user.getId(), user.getEmail(), user.getDisplayName(), user.getRole().name());
+        return new UserResponse(user.getId(), user.getUsernameValue(), user.getEmail(), user.getDisplayName(), user.getRole().name());
     }
 
     @PostMapping("/logout")

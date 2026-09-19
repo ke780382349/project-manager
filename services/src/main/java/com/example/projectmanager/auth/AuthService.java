@@ -30,13 +30,20 @@ public class AuthService {
     }
 
     public User authenticate(LoginRequest request) {
-        String email = normalizeEmail(request.email());
-        User user = userRepository.findByEmailIgnoreCase(email)
+        String account = request.account().trim();
+        User user = findByAccount(account)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "邮箱或密码错误"));
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "邮箱或密码错误");
         }
         return user;
+    }
+
+    private java.util.Optional<User> findByAccount(String account) {
+        if (account.contains("@")) {
+            return userRepository.findByEmailIgnoreCase(normalizeEmail(account));
+        }
+        return userRepository.findByUsernameIgnoreCase(account);
     }
 
     @Transactional

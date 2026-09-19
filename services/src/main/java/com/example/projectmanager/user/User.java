@@ -21,6 +21,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 80, unique = true)
+    private String username;
+
     @Column(nullable = false, length = 120)
     private String email;
 
@@ -47,9 +50,15 @@ public class User {
     }
 
     public User(String email, String passwordHash, String displayName) {
+        this(null, email, passwordHash, displayName, UserRole.USER);
+    }
+
+    public User(String username, String email, String passwordHash, String displayName, UserRole role) {
+        this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.displayName = displayName;
+        this.role = role;
     }
 
     @PrePersist
@@ -70,6 +79,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getPasswordHash() {

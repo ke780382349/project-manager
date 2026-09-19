@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class AuthenticatedUser implements UserDetails {
 
     private final Long id;
+    private final String username;
     private final String email;
     private final String passwordHash;
     private final String displayName;
@@ -19,6 +20,7 @@ public class AuthenticatedUser implements UserDetails {
 
     private AuthenticatedUser(User user) {
         this.id = user.getId();
+        this.username = user.getUsername();
         this.email = user.getEmail();
         this.passwordHash = user.getPasswordHash();
         this.displayName = user.getDisplayName();
@@ -32,6 +34,10 @@ public class AuthenticatedUser implements UserDetails {
 
     public Long getId() {
         return id;
+    }
+
+    public String getUsernameValue() {
+        return username;
     }
 
     public String getEmail() {

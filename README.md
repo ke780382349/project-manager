@@ -56,6 +56,15 @@ POST /api/auth/logout
 GET  /api/dashboard     Authorization: Bearer <token>
 ```
 
+后端首次启动时会自动创建管理员测试账号：
+
+```text
+账号：admin
+密码：admin
+```
+
+登录接口同时接受邮箱或账号字段，例如管理员可以提交 `{"email":"admin","password":"admin"}`。
+
 开发阶段后端使用 `spring.jpa.hibernate.ddl-auto=update` 自动创建和更新 MySQL 表结构，暂时不引入 Redis 或 Flyway。
 
 ## 配置覆盖
